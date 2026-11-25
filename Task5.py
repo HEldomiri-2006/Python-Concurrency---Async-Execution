@@ -1,0 +1,38 @@
+import asyncio
+import time
+async def heavy_cpu_function():
+    sum=0
+    
+    start_time=time.perf_counter()
+    for i in range(100_000_000):
+        sum+=i
+        if(i%100000==0):
+            await asyncio.sleep(0)
+
+        
+    print(sum)
+    end_time=time.perf_counter()
+    print(f"end time {end_time-start_time} ")
+
+async def task(task_id: int):
+    print(f"Async Task {task_id}: Start")
+    await asyncio.sleep(1)
+    print(f"Async Task {task_id}: Finish")
+
+
+async def main():
+    start_time=time.perf_counter()
+
+    tasks=[asyncio.create_task(task(i))for i in range (1,4)]
+    
+    await asyncio.sleep(0.1)
+
+    
+
+    await asyncio.gather(heavy_cpu_function(),*tasks)
+
+    end_time=time.perf_counter()
+
+
+if __name__ == "__main__":
+    asyncio.run(main())
